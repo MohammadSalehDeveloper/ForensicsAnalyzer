@@ -1,0 +1,111 @@
+# ---------------------------
+#   ASP.NET / .NET Core
+# ---------------------------
+
+# Build results
+bin/
+obj/
+out/
+debug/
+release/
+x64/
+x86/
+[Aa]rtifacts/
+
+# .NET user files
+project.lock.json
+project.fragment.lock.json
+*.user
+*.userosscache
+*.suo
+*.psess
+*.pidb
+*.svclog
+*.vsp
+*.vspx
+
+# Auto-generated files
+*.dll
+*.exe
+*.appx
+*.cache
+*.config
+*.dbmdl
+*.jfm
+*_i.c
+*_p.c
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.vscode/
+
+# Publish folder
+publish/
+wwwroot/dist/
+wwwroot/node_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Entity Framework
+*.mdf
+*.ldf
+*.ndf
+
+# Logs
+*.log
+logs/
+LogFiles/
+
+# Sensitive files
+appsettings.Development.json
+appsettings.*.local.json
+
+# ---------------------------
+#   Rider / JetBrains IDE
+# ---------------------------
+
+# User-specific ide configs
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+
+# Rider plugins
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqldialects.xml
+.idea/**/httpRequests/
+.idea/**/http-requests/
+.idea/**/aws/
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# JetBrains caches
+.idea/**/libraries/
+.idea/**/modules.xml
+.idea/**/gradle.xml
+.idea/**/runConfigurations.xml
+
+# ---------------------------
+#   OS Files
+# ---------------------------
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
