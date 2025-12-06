@@ -1,0 +1,11 @@
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\bin\Debug\net9.0\ForensicsAnalyzer.Contracts.deps.json
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\bin\Debug\net9.0\ForensicsAnalyzer.Contracts.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\bin\Debug\net9.0\ForensicsAnalyzer.Contracts.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\ForensicsAnalyzer.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\ForensicsAnalyzer.Contracts.AssemblyInfoInputs.cache
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\ForensicsAnalyzer.Contracts.AssemblyInfo.cs
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\ForensicsAnalyzer.Contracts.csproj.CoreCompileInputs.cache
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\ForensicsAnalyzer.Contracts.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\refint\ForensicsAnalyzer.Contracts.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\ForensicsAnalyzer.Contracts.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Contracts\obj\Debug\net9.0\ref\ForensicsAnalyzer.Contracts.dll

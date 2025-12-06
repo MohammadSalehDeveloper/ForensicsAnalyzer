@@ -1,0 +1,17 @@
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\bin\Debug\net9.0\ForensicsAnalyzer.Application.deps.json
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\bin\Debug\net9.0\ForensicsAnalyzer.Application.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\bin\Debug\net9.0\ForensicsAnalyzer.Application.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\bin\Debug\net9.0\ForensicsAnalyzer.Contracts.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\bin\Debug\net9.0\ForensicsAnalyzer.Domain.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\bin\Debug\net9.0\ForensicsAnalyzer.Contracts.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\bin\Debug\net9.0\ForensicsAnalyzer.Domain.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ForensicsAnalyzer.Application.csproj.AssemblyReference.cache
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ForensicsAnalyzer.Application.GeneratedMSBuildEditorConfig.editorconfig
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ForensicsAnalyzer.Application.AssemblyInfoInputs.cache
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ForensicsAnalyzer.Application.AssemblyInfo.cs
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ForensicsAnalyzer.Application.csproj.CoreCompileInputs.cache
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\Forensic.72BDF75E.Up2Date
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ForensicsAnalyzer.Application.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\refint\ForensicsAnalyzer.Application.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ForensicsAnalyzer.Application.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Application\obj\Debug\net9.0\ref\ForensicsAnalyzer.Application.dll

@@ -1,0 +1,11 @@
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\bin\Debug\net9.0\ForensicsAnalyzer.Domain.deps.json
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\bin\Debug\net9.0\ForensicsAnalyzer.Domain.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\bin\Debug\net9.0\ForensicsAnalyzer.Domain.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\ForensicsAnalyzer.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\ForensicsAnalyzer.Domain.AssemblyInfoInputs.cache
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\ForensicsAnalyzer.Domain.AssemblyInfo.cs
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\ForensicsAnalyzer.Domain.csproj.CoreCompileInputs.cache
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\ForensicsAnalyzer.Domain.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\refint\ForensicsAnalyzer.Domain.dll
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\ForensicsAnalyzer.Domain.pdb
+E:\Programming\Development\ForensicsAnalyzer\src\ForensicsAnalyzer.Domain\obj\Debug\net9.0\ref\ForensicsAnalyzer.Domain.dll
