@@ -1,24 +1,37 @@
 ﻿using ForensicsAnalyzer.Application.Cases;
+using ForensicsAnalyzer.Application.Cases.Commands.CreateCase;
+using ForensicsAnalyzer.Application.Cases.Queries;
 using ForensicsAnalyzer.Contracts.Cases;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ForensicsAnalyzer.WebApi.Controllers;
 
+// WebApi/Controllers/CasesController.cs
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
 [ApiController]
 [Route("api/[controller]")]
-public sealed class CasesController : ControllerBase
+public class CasesController : ControllerBase
 {
-    private readonly ICaseService _caseService;
+    private readonly IMediator _mediator;
 
-    public CasesController(ICaseService caseService)
+    public CasesController(IMediator mediator)
     {
-        _caseService = caseService;
+        _mediator = mediator;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Guid>> Create(CreateCaseCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return Ok(id);
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<CaseDto>>> Get(CancellationToken cancellationToken)
+    public async Task<ActionResult<List<CaseDto>>> Get()
     {
-        var result = await _caseService.GetAllAsync(cancellationToken);
+        var result = await _mediator.Send(new GetCasesQuery());
         return Ok(result);
     }
 }
