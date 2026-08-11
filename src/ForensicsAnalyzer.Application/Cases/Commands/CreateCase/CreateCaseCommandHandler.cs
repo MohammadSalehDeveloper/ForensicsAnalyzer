@@ -1,5 +1,5 @@
 ﻿using ForensicsAnalyzer.Application.Interfaces;
-using ForensicsAnalyzer.Domain.Cases;
+using ForensicsAnalyzer.Domain.Entities;
 using MediatR;
 
 namespace ForensicsAnalyzer.Application.Cases.Commands.CreateCase;
@@ -22,11 +22,13 @@ public class CreateCaseCommandHandler
         CreateCaseCommand request,
         CancellationToken cancellationToken)
     {
-        var entity = new Case(
-            request.Name,
-            request.Description,
-            _currentUser.UserId
-        );
+        var entity = new Case
+        {
+            Name = request.Name,
+            Description = request.Description,
+            SourceId = request.SourceId,
+            UserId = _currentUser.UserId
+        };
 
         _context.Cases.Add(entity);
         await _context.SaveChangesAsync(cancellationToken);

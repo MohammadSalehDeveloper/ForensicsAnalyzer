@@ -1,4 +1,4 @@
-﻿using ForensicsAnalyzer.Domain.Cases;
+﻿using ForensicsAnalyzer.Domain.Entities;
 
 namespace ForensicsAnalyzer.Application.Interfaces.Repositories;
 

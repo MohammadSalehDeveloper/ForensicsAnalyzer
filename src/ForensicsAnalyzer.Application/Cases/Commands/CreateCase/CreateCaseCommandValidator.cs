@@ -12,5 +12,8 @@ public class CreateCaseCommandValidator : AbstractValidator<CreateCaseCommand>
 
         RuleFor(x => x.Description)
             .MaximumLength(2000);
+
+        RuleFor(x => x.SourceId)
+            .NotEmpty().WithMessage("SourceId is required for a case");
     }
 }

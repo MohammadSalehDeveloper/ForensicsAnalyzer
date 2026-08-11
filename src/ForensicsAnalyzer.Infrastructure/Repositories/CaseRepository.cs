@@ -1,5 +1,5 @@
 ﻿using ForensicsAnalyzer.Application.Interfaces.Repositories;
-using ForensicsAnalyzer.Domain.Cases;
+using ForensicsAnalyzer.Domain.Entities;
 using ForensicsAnalyzer.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 

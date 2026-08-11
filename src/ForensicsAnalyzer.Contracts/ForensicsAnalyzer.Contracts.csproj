@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ForensicsAnalyzer.Domain\ForensicsAnalyzer.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -4,5 +4,6 @@ namespace ForensicsAnalyzer.Application.Cases.Commands.CreateCase;
 
 public record CreateCaseCommand(
     string Name,
-    string Description
+    string Description,
+    Guid SourceId
 ) : IRequest<Guid>;

@@ -1,12 +1,13 @@
 using System.Text;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi;
 using ForensicsAnalyzer.Application;
 using ForensicsAnalyzer.Infrastructure;
-using ForensicsAnalyzer.Application.Cases;
 using ForensicsAnalyzer.Application.Interfaces;
-using ForensicsAnalyzer.Contracts.Cases;
+using ForensicsAnalyzer.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using ForensicsAnalyzer.WebApi.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,25 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and your JWT token."
+    });
+
+    options.AddSecurityRequirement(_ =>
+    {
+        var req = new OpenApiSecurityRequirement();
+        req[new OpenApiSecuritySchemeReference("Bearer", null)] = new List<string>();
+        return req;
+    });
+});
 
 builder.Services.AddCors(options =>
 {
@@ -38,8 +57,16 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
+    await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ForensicsAnalyzer API V1");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -47,37 +74,37 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-        };
-    })
-    .AddGoogle(options =>
-    {
-        options.ClientId = builder.Configuration["GoogleAuth:ClientId"];
-        options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"];
-    });
-
-
-
 app.UseCors("BlazorClient");
 
 app.MapControllers();
+
+// Serve Blazor WebClient static files (development convenience)
+var clientRoot = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "ForensicsAnalyzer.WebClient", "wwwroot"));
+var clientFiles = new PhysicalFileProvider(clientRoot);
+
+app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = clientFiles });
+app.UseStaticFiles(new StaticFileOptions { FileProvider = clientFiles });
+
+// Fallback to the client index.html for non-API requests (so SPA routes work)
+app.MapWhen(ctx => !ctx.Request.Path.StartsWithSegments("/api")
+                   && !ctx.Request.Path.StartsWithSegments("/swagger")
+                   && !ctx.Request.Path.StartsWithSegments("/_framework"),
+    branch =>
+    {
+        branch.Run(async context =>
+        {
+            var index = clientFiles.GetFileInfo("index.html");
+            if (index.Exists)
+            {
+                context.Response.ContentType = "text/html";
+                using var stream = index.CreateReadStream();
+                await stream.CopyToAsync(context.Response.Body);
+            }
+            else
+            {
+                context.Response.StatusCode = 404;
+            }
+        });
+    });
 
 await app.RunAsync();

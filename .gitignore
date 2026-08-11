@@ -1,4 +1,9 @@
 # ---------------------------
+#   Secrets / Environment
+# ---------------------------
+.env
+
+# ---------------------------
 #   ASP.NET / .NET Core
 # ---------------------------
 
@@ -62,6 +67,11 @@ LogFiles/
 # Sensitive files
 appsettings.Development.json
 appsettings.*.local.json
+
+# ---------------------------
+#   Visual Studio
+# ---------------------------
+.vs/
 
 # ---------------------------
 #   Rider / JetBrains IDE

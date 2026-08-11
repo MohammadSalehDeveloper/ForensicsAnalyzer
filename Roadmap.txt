@@ -1,0 +1,13 @@
+🗂 Full Project Phases
+Phase	Goal / Scope	Status
+Phase 1	Create project skeleton: solution, projects (Domain, Application, Infrastructure, WebApi, Blazor Client), Clean Architecture folders	✅ Done
+Phase 2	Setup DB + Identity + JWT basics, EF Core + SQL Server	✅ Done
+Phase 3	Implement CQRS + MediatR + AutoMapper for “Cases” feature, FluentValidation, thin controllers, ICurrentUserService	✅ Done
+Phase 4	Google OAuth integration + JWT issuance for Blazor client	✅ Done
+Phase 5	Blazor Client authentication UI + secure routing + AuthStateProvider	⬜ Pending
+Phase 6	Middleware layer: Exception handling, Logging, CorrelationId, Audit logging	⬜ Pending
+Phase 7	Implement additional core forensic features: Case notes, Evidence, Alerts, etc., using CQRS + MediatR pattern	⬜ Pending
+Phase 8	Role-based + Policy-based + Resource-based Authorization	⬜ Pending
+Phase 9	Blazor Client pages: Dashboards, Search, Forensic analysis tools	⬜ Pending
+Phase 10	Testing: Unit tests, Integration tests, MediatR pipelines, validation	⬜ Pending
+Phase 11	Deployment: Docker, Azure / IIS, GitHub repository setup, CI/CD	⬜ Pending
