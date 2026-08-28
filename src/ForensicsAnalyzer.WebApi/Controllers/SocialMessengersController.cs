@@ -26,6 +26,14 @@ public class SocialMessengersController : ControllerBase
     public async Task<ActionResult<List<SocialMessengerDto>>> Get()
         => Ok(await _mediator.Send(new GetSocialMessengersQuery()));
 
+    [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.Social.Read)]
+    public async Task<ActionResult<SocialMessengerDto>> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetSocialMessengerByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
+    }
+
     [HttpPut("{id:guid}")]
     [HasPermission(Permissions.Social.Update)]
     public async Task<IActionResult> Update(Guid id, UpdateSocialMessengerCommand command)

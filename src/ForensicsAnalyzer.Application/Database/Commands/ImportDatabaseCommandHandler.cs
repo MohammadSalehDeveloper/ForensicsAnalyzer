@@ -27,6 +27,7 @@ public sealed class ImportDatabaseCommandHandler : IRequestHandler<ImportDatabas
                 userDto.Email,
                 userDto.Password,
                 userDto.FullName ?? userDto.UserName,
+                roles: null,
                 cancellationToken);
 
             if (!result.Succeeded)

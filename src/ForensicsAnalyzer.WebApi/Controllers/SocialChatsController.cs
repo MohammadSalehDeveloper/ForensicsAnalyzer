@@ -26,6 +26,31 @@ public class SocialChatsController : ControllerBase
     public async Task<ActionResult<List<SocialChatDto>>> GetByMessenger(Guid messengerId)
         => Ok(await _mediator.Send(new GetSocialChatsQuery(messengerId)));
 
+    [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.Social.Read)]
+    public async Task<ActionResult<SocialChatDto>> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetSocialChatByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPut("{id:guid}")]
+    [HasPermission(Permissions.Social.Update)]
+    public async Task<IActionResult> Update(Guid id, UpdateSocialChatCommand command)
+    {
+        if (id != command.Id) return BadRequest("ID mismatch.");
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    [HasPermission(Permissions.Social.Delete)]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        await _mediator.Send(new DeleteSocialChatCommand(id));
+        return NoContent();
+    }
+
     [HttpGet("{chatId:guid}/messages")]
     [HasPermission(Permissions.Social.Read)]
     public async Task<ActionResult<List<SocialMessageDto>>> GetMessages(Guid chatId)

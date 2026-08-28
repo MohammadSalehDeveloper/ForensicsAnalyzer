@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ForensicsAnalyzer.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260712195217_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260814230509_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -785,11 +785,17 @@ namespace ForensicsAnalyzer.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DeviceType")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MetadataJson")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MethodType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -1,6 +1,7 @@
 using ForensicsAnalyzer.Application.Interfaces;
 using ForensicsAnalyzer.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ForensicsAnalyzer.Application.Thumbnails.Commands;
 
@@ -39,6 +40,28 @@ public sealed class DeleteThumbnailCommandHandler : IRequestHandler<DeleteThumbn
             ?? throw new KeyNotFoundException($"Thumbnail {request.Id} not found.");
 
         _context.Thumbnails.Remove(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+}
+
+public sealed class UpdateThumbnailCommandHandler : IRequestHandler<UpdateThumbnailCommand>
+{
+    private readonly IApplicationDbContext _context;
+
+    public UpdateThumbnailCommandHandler(IApplicationDbContext context) => _context = context;
+
+    public async Task Handle(UpdateThumbnailCommand request, CancellationToken cancellationToken)
+    {
+        var entity = await _context.Thumbnails
+            .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken)
+            ?? throw new KeyNotFoundException($"Thumbnail {request.Id} not found.");
+
+        entity.ThumbnailPath = request.ThumbnailPath;
+        entity.Width = request.Width;
+        entity.Height = request.Height;
+        entity.SizeLabel = request.SizeLabel;
+        entity.UpdatedAt = DateTime.UtcNow;
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

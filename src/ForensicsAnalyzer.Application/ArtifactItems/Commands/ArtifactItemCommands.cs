@@ -9,4 +9,10 @@ public record CreateArtifactItemCommand(
     Guid ReferenceId
 ) : IRequest<Guid>;
 
+public record UpdateArtifactItemCommand(
+    Guid Id,
+    ArtifactType Type,
+    Guid ReferenceId
+) : IRequest;
+
 public record DeleteArtifactItemCommand(Guid Id) : IRequest;

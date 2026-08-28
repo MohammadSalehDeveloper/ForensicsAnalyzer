@@ -41,3 +41,23 @@ public sealed class DeleteArtifactItemCommandHandler : IRequestHandler<DeleteArt
         await _context.SaveChangesAsync(cancellationToken);
     }
 }
+
+public sealed class UpdateArtifactItemCommandHandler : IRequestHandler<UpdateArtifactItemCommand>
+{
+    private readonly IApplicationDbContext _context;
+
+    public UpdateArtifactItemCommandHandler(IApplicationDbContext context) => _context = context;
+
+    public async Task Handle(UpdateArtifactItemCommand request, CancellationToken cancellationToken)
+    {
+        var entity = await _context.ArtifactItems
+            .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
+            ?? throw new KeyNotFoundException($"ArtifactItem {request.Id} not found.");
+
+        entity.Type = request.Type;
+        entity.ReferenceId = request.ReferenceId;
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+}

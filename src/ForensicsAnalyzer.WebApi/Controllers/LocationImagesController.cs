@@ -26,6 +26,14 @@ public class LocationImagesController : ControllerBase
     public async Task<ActionResult<List<LocationImageDto>>> GetByFile(Guid fileCustomId)
         => Ok(await _mediator.Send(new GetLocationImagesByFileCustomQuery(fileCustomId)));
 
+    [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.Artifacts.Read)]
+    public async Task<ActionResult<LocationImageDto>> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetLocationImageByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
+    }
+
     [HttpPut("{id:guid}")]
     [HasPermission(Permissions.Artifacts.Update)]
     public async Task<IActionResult> Update(Guid id, UpdateLocationImageCommand command)

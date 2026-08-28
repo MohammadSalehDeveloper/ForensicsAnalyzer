@@ -26,6 +26,23 @@ public class LocationsController : ControllerBase
     public async Task<ActionResult<List<LocationDto>>> GetByArtifact(Guid artifactId)
         => Ok(await _mediator.Send(new GetLocationsQuery(artifactId)));
 
+    [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.Artifacts.Read)]
+    public async Task<ActionResult<LocationDto>> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetLocationByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPut("{id:guid}")]
+    [HasPermission(Permissions.Artifacts.Update)]
+    public async Task<IActionResult> Update(Guid id, UpdateLocationCommand command)
+    {
+        if (id != command.Id) return BadRequest("ID mismatch.");
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
     [HttpDelete("{id:guid}")]
     [HasPermission(Permissions.Artifacts.Delete)]
     public async Task<IActionResult> Delete(Guid id)

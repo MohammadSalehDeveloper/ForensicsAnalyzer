@@ -26,6 +26,23 @@ public class ThumbnailsController : ControllerBase
     public async Task<ActionResult<List<ThumbnailDto>>> GetByFile(Guid fileCustomId)
         => Ok(await _mediator.Send(new GetThumbnailsByFileCustomQuery(fileCustomId)));
 
+    [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.Artifacts.Read)]
+    public async Task<ActionResult<ThumbnailDto>> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetThumbnailByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPut("{id:guid}")]
+    [HasPermission(Permissions.Artifacts.Update)]
+    public async Task<IActionResult> Update(Guid id, UpdateThumbnailCommand command)
+    {
+        if (id != command.Id) return BadRequest("ID mismatch.");
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
     [HttpDelete("{id:guid}")]
     [HasPermission(Permissions.Artifacts.Delete)]
     public async Task<IActionResult> Delete(Guid id)

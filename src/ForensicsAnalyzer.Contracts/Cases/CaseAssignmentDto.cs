@@ -7,4 +7,6 @@ public sealed class CaseAssignmentDto
     public string UserId { get; set; } = string.Empty;
     public string AssignedByUserId { get; set; } = string.Empty;
     public DateTime AssignedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

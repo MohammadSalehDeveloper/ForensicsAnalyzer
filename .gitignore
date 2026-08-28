@@ -15,7 +15,8 @@ debug/
 release/
 x64/
 x86/
-[Aa]rtifacts/
+[Bb]in/**/[Aa]rtifacts/
+[Oo]bj/**/[Aa]rtifacts/
 
 # .NET user files
 project.lock.json
