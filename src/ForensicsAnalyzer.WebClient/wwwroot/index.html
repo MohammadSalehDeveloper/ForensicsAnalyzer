@@ -1,7 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<base href="/" />
 
-<div id="app">Loading...</div>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ForensicsAnalyzer</title>
+    <base href="/" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="ForensicsAnalyzer.WebClient.styles.css" />
+</head>
 
-<script src="_framework/blazor.webassembly.js"></script>
+<body>
+    <div id="app">
+        <div class="splash-loader">
+            <div class="splash-loader__stage">
+                <canvas id="splash-canvas" aria-hidden="true"></canvas>
+                <div class="splash-loader__core">
+                    <svg class="loading-progress" viewBox="0 0 100 100" aria-hidden="true">
+                        <circle r="40" cx="50" cy="50" />
+                        <circle r="40" cx="50" cy="50" />
+                    </svg>
+                    <div class="loading-progress-text"></div>
+                </div>
+            </div>
+            <p class="splash-loader__brand">ForensicsAnalyzer</p>
+            <p class="splash-loader__status">Preparing workspace…</p>
+        </div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script type="module" src="js/splash-loader.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>

@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ForensicsAnalyzer.WebClient.Auth;
@@ -8,14 +7,10 @@ namespace ForensicsAnalyzer.WebClient.Auth;
 public class LocalStorageAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly ILocalStorageService _localStorageService;
-    private readonly HttpClient _httpClient;
 
-    public LocalStorageAuthenticationStateProvider(
-        ILocalStorageService localStorageService, 
-        HttpClient httpClient)
+    public LocalStorageAuthenticationStateProvider(ILocalStorageService localStorageService)
     {
         _localStorageService = localStorageService;
-        _httpClient = httpClient;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -24,7 +19,11 @@ public class LocalStorageAuthenticationStateProvider : AuthenticationStateProvid
 
         if (string.IsNullOrEmpty(token) || IsTokenExpired(token))
         {
-            await _localStorageService.RemoveItemAsync("auth_token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                await _localStorageService.RemoveItemAsync("auth_token");
+            }
+
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
@@ -60,15 +59,14 @@ public class LocalStorageAuthenticationStateProvider : AuthenticationStateProvid
         return string.IsNullOrEmpty(token) || IsTokenExpired(token) ? null : token;
     }
 
-    private List<Claim> ParseClaimsFromJwt(string jwt)
+    private static List<Claim> ParseClaimsFromJwt(string jwt)
     {
         var claims = new List<Claim>();
-        
+
         try
         {
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(jwt);
-
             claims.AddRange(token.Claims);
         }
         catch
@@ -79,7 +77,7 @@ public class LocalStorageAuthenticationStateProvider : AuthenticationStateProvid
         return claims;
     }
 
-    private bool IsTokenExpired(string token)
+    private static bool IsTokenExpired(string token)
     {
         try
         {

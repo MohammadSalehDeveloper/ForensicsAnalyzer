@@ -2,82 +2,228 @@
 @using Microsoft.AspNetCore.Authorization
 @using ForensicsAnalyzer.Contracts.Cases
 @attribute [Authorize]
+@implements IAsyncDisposable
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
-<div class="container-fluid mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h1>Cases</h1>
-            <p class="text-muted">Manage your forensics cases</p>
+<div class="cases-dashboard">
+    <section class="cases-hero" aria-label="Cases overview">
+        <div class="cases-hero__content">
+            <p class="cases-hero__eyebrow">Forensics workspace</p>
+            <h1 class="cases-hero__title">Case Dashboard</h1>
+            <p class="cases-hero__subtitle">Track investigations, evidence links, and case activity in one place.</p>
+            <button class="btn btn-primary cases-hero__cta" @onclick="ShowCreateModal">
+                New Case
+            </button>
+
+            <div class="cases-shortcuts" aria-label="Forensics shortcuts">
+                <button type="button"
+                        class='@GetShortcutClass("map")'
+                        @onmouseenter="OnMapHover"
+                        @onmouseleave="ClearAnimationFocus"
+                        @onclick="OpenMap">
+                    <span class="cases-shortcut__icon" aria-hidden="true">⌖</span>
+                    <span class="cases-shortcut__label">Map</span>
+                    <span class="cases-shortcut__hint">Locations</span>
+                </button>
+                <button type="button"
+                        class='@GetShortcutClass("contacts")'
+                        @onmouseenter="OnContactsHover"
+                        @onmouseleave="ClearAnimationFocus"
+                        @onclick="OpenContacts">
+                    <span class="cases-shortcut__icon" aria-hidden="true">◉</span>
+                    <span class="cases-shortcut__label">Contacts</span>
+                    <span class="cases-shortcut__hint">Network</span>
+                </button>
+                <button type="button"
+                        class='@GetShortcutClass("thumbnail")'
+                        @onmouseenter="OnThumbnailHover"
+                        @onmouseleave="ClearAnimationFocus"
+                        @onclick="OpenThumbnails">
+                    <span class="cases-shortcut__icon" aria-hidden="true">▣</span>
+                    <span class="cases-shortcut__label">Thumbnails</span>
+                    <span class="cases-shortcut__hint">Media</span>
+                </button>
+            </div>
         </div>
-        <div class="col-auto">
-            <button class="btn btn-primary" @onclick="ShowCreateModal">
-                <i class="bi bi-plus-lg"></i> New Case
+        <div class="cases-hero__stage">
+            <canvas @ref="_canvas" class="cases-hero__canvas" aria-hidden="true"></canvas>
+        </div>
+    </section>
+
+    <section class="cases-stats" aria-label="Case statistics">
+        <div class="cases-stat">
+            <span class="cases-stat__value">@TotalCases</span>
+            <span class="cases-stat__label">Total cases</span>
+        </div>
+        <div class="cases-stat">
+            <span class="cases-stat__value">@RecentCases</span>
+            <span class="cases-stat__label">Opened this week</span>
+        </div>
+        <div class="cases-stat">
+            <span class="cases-stat__value">@ActiveSources</span>
+            <span class="cases-stat__label">Linked sources</span>
+        </div>
+    </section>
+
+    <section class="cases-panel">
+        <div class="cases-panel__header">
+            <h2 class="cases-panel__title">All cases</h2>
+            <button class="btn btn-sm btn-outline-primary" @onclick="LoadCases" disabled="@isLoading">
+                Refresh
             </button>
         </div>
-    </div>
 
-    @if (isLoading)
-    {
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    }
-    else if (string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Case ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Created</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (cases?.Count > 0)
-                    {
-                        @foreach (var case_ in cases)
+        @if (isLoading)
+        {
+            <div class="cases-loading" role="status">
+                <div class="spinner-border text-primary" aria-hidden="true"></div>
+                <span>Loading cases…</span>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mb-0">@errorMessage</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover cases-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Case ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (cases?.Count > 0)
+                        {
+                            @foreach (var case_ in cases)
+                            {
+                                <tr class="cases-table__row">
+                                    <td><code class="cases-table__id">@ShortId(case_.Id)</code></td>
+                                    <td>@case_.Name</td>
+                                    <td class="cases-table__desc">@case_.Description</td>
+                                    <td>@case_.CreatedAt.ToShortDateString()</td>
+                                    <td class="cases-table__actions">
+                                        <button class="btn btn-sm btn-outline-primary" @onclick="() => EditCase(case_.Id.ToString())">Edit</button>
+                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteCase(case_.Id.ToString())">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@case_.Id</td>
-                                <td>@case_.Name</td>
-                                <td>@case_.Description</td>
-                                <td>@case_.CreatedAt.ToShortDateString()</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => EditCase(case_.Id.ToString())">Edit</button>
-                                    <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteCase(case_.Id.ToString())">Delete</button>
-                                </td>
+                                <td colspan="5" class="text-center text-muted py-4">No cases found</td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">No cases found</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-danger">@errorMessage</div>
-    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
 </div>
 
 @code {
     private List<CaseDto>? cases;
     private bool isLoading = true;
     private string errorMessage = string.Empty;
+    private ElementReference _canvas;
+    private bool _animationStarted;
+    private string _activeFocus = string.Empty;
+
+    private int TotalCases => cases?.Count ?? 0;
+    private int RecentCases => cases?.Count(c => c.CreatedAt >= DateTime.UtcNow.AddDays(-7)) ?? 0;
+    private int ActiveSources => cases?.Select(c => c.SourceId).Distinct().Count() ?? 0;
+
+    private string FocusClass(string mode) =>
+        string.Equals(_activeFocus, mode, StringComparison.OrdinalIgnoreCase) ? "is-active" : string.Empty;
+
+    private string GetShortcutClass(string mode) =>
+        $"cases-shortcut cases-shortcut--{mode} {FocusClass(mode)}".Trim();
+
+    private Task OnMapHover() => SetAnimationFocus("map");
+    private Task OnContactsHover() => SetAnimationFocus("contacts");
+    private Task OnThumbnailHover() => SetAnimationFocus("thumbnail");
+
+    private void OpenMap() => OpenShortcut("map");
+    private void OpenContacts() => OpenShortcut("contacts");
+    private void OpenThumbnails() => OpenShortcut("thumbnail");
+
+    private async Task SetAnimationFocus(string mode)
+    {
+        _activeFocus = mode;
+        if (!_animationStarted)
+        {
+            return;
+        }
+
+        try
+        {
+            await JS.InvokeVoidAsync("ForensicsCasesDashboard.setFocus", mode);
+        }
+        catch (JSException)
+        {
+        }
+    }
+
+    private async Task ClearAnimationFocus()
+    {
+        _activeFocus = string.Empty;
+        if (!_animationStarted)
+        {
+            return;
+        }
+
+        try
+        {
+            await JS.InvokeVoidAsync("ForensicsCasesDashboard.clearFocus");
+        }
+        catch (JSException)
+        {
+        }
+    }
+
+    private void OpenShortcut(string mode)
+    {
+        var path = mode switch
+        {
+            "map" => "/locations",
+            "contacts" => "/contacts",
+            "thumbnail" => "/thumbnails",
+            _ => "/cases"
+        };
+        NavigationManager.NavigateTo(path);
+    }
 
     protected override async Task OnInitializedAsync()
     {
         await LoadCases();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _animationStarted)
+        {
+            return;
+        }
+
+        try
+        {
+            // Load Three.js dashboard module only on this page (not during splash).
+            await JS.InvokeAsync<IJSObjectReference>("import", "./js/cases-dashboard-boot.js");
+            await JS.InvokeVoidAsync("ForensicsCasesDashboard.init", _canvas);
+            _animationStarted = true;
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Cases dashboard animation failed: {ex.Message}");
+        }
     }
 
     private async Task LoadCases()
@@ -110,29 +256,54 @@
 
     private async Task DeleteCase(string caseId)
     {
-        if (await ConfirmDelete())
+        if (!await ConfirmDelete())
         {
-            try
+            return;
+        }
+
+        try
+        {
+            var response = await Http.DeleteAsync($"api/cases/{caseId}");
+            if (response.IsSuccessStatusCode)
             {
-                var response = await Http.DeleteAsync($"api/cases/{caseId}");
-                if (response.IsSuccessStatusCode)
-                {
-                    await LoadCases();
-                }
-                else
-                {
-                    errorMessage = "Failed to delete case";
-                }
+                await LoadCases();
             }
-            catch (Exception ex)
+            else
             {
-                errorMessage = $"Error: {ex.Message}";
+                errorMessage = "Failed to delete case";
             }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
         }
     }
 
     private Task<bool> ConfirmDelete()
     {
-        return Task.FromResult(true); // Replace with actual confirmation dialog
+        return Task.FromResult(true);
+    }
+
+    private static string ShortId(Guid id)
+    {
+        var text = id.ToString("N");
+        return text.Length <= 8 ? text : text[..8];
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_animationStarted)
+            {
+                await JS.InvokeVoidAsync("ForensicsCasesDashboard.dispose", _canvas);
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (JSException)
+        {
+        }
     }
 }
