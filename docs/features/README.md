@@ -23,3 +23,10 @@ Product and technical feature docs. Create a page here when adding a **new featu
 ```
 
 Keep `PROJECT_DOCUMENTATION.md` as the index of the running system; pages here explain a single capability in depth.
+
+## Pages
+
+| Page | Topic |
+|------|--------|
+| [agent-guard-protocols.md](agent-guard-protocols.md) | Agent standing orders |
+| [sql-server-docker.md](sql-server-docker.md) | Local SQL Server 2022 via Docker Compose |

@@ -1,26 +1,63 @@
-version: '3.8'
+# Local SQL Server for development. Application and Domain stay unchanged:
+# EF Core still uses UseSqlServer(DefaultConnection). PostgreSQL is not in this stack.
+#
+# Usage (from repo root):
+#   copy .env.example .env
+#   docker compose up -d
+# Docker Desktop needs ~2 GB RAM for this image.
 
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: forensics_sqlserver
+    hostname: sqlserver
     env_file:
       - .env
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: ${SA_PASSWORD}
-      MSSQL_DB: ${DB_NAME}
+      MSSQL_PID: ${MSSQL_PID:-Developer}
     ports:
-      - "1433:1433"
+      - "${SQL_PORT:-14330}:1433"
     volumes:
       - sqlserverdata:/var/opt/mssql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" -No -l 30 || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
-      start_period: 30s
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -b -l 2 -Q \"SELECT 1\" || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 25s
+    networks:
+      - forensics
+
+  # Official image has no MSSQL_DB / docker-entrypoint-initdb.d.
+  # Create the catalog after the engine is healthy so SSMS and EF share the same database name.
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: forensics_sqlserver_init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - >
+        /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" -C -b -l 30
+        -Q "IF DB_ID('${DB_NAME}') IS NULL CREATE DATABASE [${DB_NAME}];"
+    restart: "no"
+    networks:
+      - forensics
+
+networks:
+  forensics:
+    name: forensics_net
 
 volumes:
   sqlserverdata:

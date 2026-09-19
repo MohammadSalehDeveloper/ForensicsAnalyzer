@@ -233,24 +233,25 @@ The WebApi `Program.cs` serves Blazor static files in Development as a convenien
 
 ## DevOps & Configuration
 
-### Docker Compose
+### Docker Compose (SQL Server)
 
-`docker-compose.yml` runs SQL Server 2022:
+Local persistence is **SQL Server 2022 Linux** via `docker-compose.yml` (`mcr.microsoft.com/mssql/server:2022-latest`). PostgreSQL is not deployed yet.
 
-```yaml
-services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    ports: ["1433:1433"]
-```
+| Piece | Role |
+|-------|------|
+| `sqlserver` | Engine on host port `SQL_PORT` (default **14330** → container 1433); volume `sqlserverdata` |
+| `sqlserver-init` | After healthy, creates `DB_NAME` (`ForensicsAnalyzerDb`). Official image ignores `MSSQL_DB` |
+| `.env` | From `.env.example` — `SA_PASSWORD`, `DB_NAME`, `SQL_PORT`, `MSSQL_PID` |
 
-Copy `.env.example` to `.env` and set `SA_PASSWORD` and `DB_NAME`.
+Healthcheck uses `/opt/mssql-tools18/bin/sqlcmd` with `-C -b -l 2`. Docker Desktop should allow ~2 GB RAM for the image.
+
+See `docs/features/sql-server-docker.md`. Dual SQL Server + PostgreSQL providers would be an Infrastructure change (new NuGet, migration sets) and is not enabled.
 
 ### Configuration (`appsettings.json`)
 
 | Section | Purpose |
 |---------|---------|
-| `ConnectionStrings:DefaultConnection` | SQL Server connection |
+| `ConnectionStrings:DefaultConnection` | SQL Server (local Docker defaults; override with env / user secrets) |
 | `JwtSettings` | Key, Issuer, Audience, ExpirationMinutes |
 | `GoogleAuth` | OAuth client credentials |
 | `SeedAdmin` | Default admin user for Development |
@@ -275,7 +276,7 @@ Configured for Blazor dev URLs: `https://localhost:7123`, `http://localhost:5123
 | 8 | Role + policy + resource-based authorization | ✅ Mostly done (permission claims + roles) |
 | 9 | Blazor dashboards, search, analysis tools | ⬜ Pending |
 | 10 | Unit + integration tests | ⬜ Pending |
-| 11 | Docker deployment, CI/CD | ⬜ Partial (SQL Server compose only) |
+| 11 | Docker deployment, CI/CD | ⬜ Partial (local SQL Server 2022 compose + init DB) |
 
 ---
 
@@ -283,34 +284,33 @@ Configured for Blazor dev URLs: `https://localhost:7123`, `http://localhost:5123
 
 ### Prerequisites
 
-- .NET 8 SDK (or version targeted by project files)
-- Docker (for SQL Server) or a local SQL Server instance
+- .NET 9 SDK
+- Docker Desktop (~2 GB RAM for the SQL Server Linux image)
 - Optional: Google OAuth credentials
 
 ### Run locally
 
-1. **Start database**
-   ```bash
-   cp .env.example .env
-   # Edit .env with a strong SA password
+1. **Start database** (PowerShell from repo root)
+   ```powershell
+   copy .env.example .env
    docker compose up -d
+   docker compose ps
    ```
+   Keep `.env` `SA_PASSWORD` in sync with `ConnectionStrings:DefaultConnection`. If you change the password or `SQL_PORT`, update the connection string (or set `ConnectionStrings__DefaultConnection`). A custom password should go in gitignored `src/ForensicsAnalyzer.WebApi/appsettings.Development.json` so it is not committed. Changing `.env` does not rotate `sa` on an existing Docker volume.
 
-2. **Update connection string** in `src/ForensicsAnalyzer.WebApi/appsettings.json` to match your SQL password.
-
-3. **Run API** (applies migrations and seeds roles/admin in Development)
+2. **Run API** (applies migrations and seeds roles/admin in Development)
    ```bash
    dotnet run --project src/ForensicsAnalyzer.WebApi
    ```
 
-4. **Run Blazor client** (separate terminal)
+3. **Run Blazor client** (separate terminal)
    ```bash
    dotnet run --project src/ForensicsAnalyzer.WebClient
    ```
 
-5. **Login** as `admin@forensics.local` / `Admin123!` and verify JWT includes role and permission claims.
+4. **Login** as `admin@forensics.local` / `Admin123!` and verify JWT includes role and permission claims.
 
-6. **Explore API** at `https://localhost:<port>/swagger`.
+5. **Explore API** at `https://localhost:<port>/swagger`.
 
 ---
 
@@ -333,6 +333,7 @@ Configured for Blazor dev URLs: `https://localhost:7123`, `http://localhost:5123
 3. Write integration tests for auth and case CRUD flows (Phase 10).
 4. Commit the current feature work in logical chunks (auth, domain API, Blazor UI).
 5. Expand Blazor pages for Sources, Artifacts, Social data, and search/dashboard views (Phase 9).
+6. After an architecture review: optional PostgreSQL provider beside SQL Server (Infrastructure only; see `docs/features/sql-server-docker.md`).
 
 ---
 
@@ -356,4 +357,5 @@ Coding agents must follow `AGENTS.md` (also `.cursor/rules/` and `docs/agent-pro
 - `Roadmap.txt` — Original phase plan
 - `README.md` — Short project description
 - `.env.example` — Docker SQL Server environment template
-- `docker-compose.yml` — Local SQL Server setup
+- `docker-compose.yml` — Local SQL Server 2022 + catalog init
+- `docs/features/sql-server-docker.md` — Local SQL Server Docker behavior and dual-provider notes
