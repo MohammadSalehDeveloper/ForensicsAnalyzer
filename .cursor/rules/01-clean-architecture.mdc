@@ -1,0 +1,39 @@
+---
+description: Clean Architecture, Clean Code, patterns, and ASP.NET conventions for ForensicsAnalyzer
+alwaysApply: true
+---
+
+# Clean Architecture & ASP.NET
+
+Stack: .NET 9, ASP.NET Core Web API, Blazor WASM, EF Core + SQL Server, Identity + JWT, CQRS (MediatR), FluentValidation, AutoMapper, permission policies.
+
+## Layer rules
+
+| Project | May depend on | Owns |
+|---------|---------------|------|
+| Domain | nothing | entities, enums, `BaseEntity`, `ISoftDelete` |
+| Contracts | nothing (or Domain types only if already true) | DTOs/requests shared by API and client |
+| Application | Domain, Contracts | commands/queries/handlers, validators, auth policies, repository **interfaces** |
+| Infrastructure | Application, Domain | EF, Identity, JWT, repositories, AutoMapper profiles, seeding |
+| WebApi | Application, Infrastructure, Contracts | thin controllers, HTTP, Swagger, CORS |
+| WebClient | Contracts (via HTTP) | Blazor UI, auth state — never Domain or Infrastructure |
+
+```csharp
+// ❌ BAD — business logic in the controller
+[HttpPost] public async Task<IActionResult> Create(Case c) { _db.Cases.Add(c); await _db.SaveChangesAsync(); }
+
+// ✅ GOOD — dispatch only
+[HttpPost] public async Task<ActionResult<Guid>> Create(CreateCaseCommand command)
+    => Ok(await _mediator.Send(command));
+```
+
+## Patterns already in use — extend them, do not replace
+
+- CQRS + MediatR; FluentValidation + pipeline behavior
+- One repository per aggregate + `IUnitOfWork`; soft delete via `ISoftDelete`
+- `[HasPermission(Permissions.X.Y)]` on API actions; thin controllers
+- Feature folders under Application (`Cases/Commands`, `Cases/Queries`)
+
+## Clean Code
+
+Small focused types, explicit names, no commented-out code, nullable enabled, prefer constructor injection. Do not introduce a new pattern (e.g. Result, vertical slices, MassTransit) without the architecture-gate question.

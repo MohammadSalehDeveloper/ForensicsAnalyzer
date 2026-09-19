@@ -1,0 +1,25 @@
+---
+description: Application layer — CQRS, validators, ports; no EF implementations
+globs: src/ForensicsAnalyzer.Application/**
+alwaysApply: false
+---
+
+# Application (`ForensicsAnalyzer.Application`)
+
+- Feature folders: `{Feature}/Commands`, `{Feature}/Queries`. Commands/queries are records implementing `IRequest<T>`.
+- Handlers contain use-case logic. Depend on interfaces (`IApplicationDbContext`, `I*Repository`, `ICurrentUserService`), not Infrastructure types.
+- FluentValidation for writes. Permissions live in `Authorization/Permissions.cs` — new groups need an architecture question.
+- No `DbContext` implementation, SQL, or Identity stores here.
+
+```csharp
+// ❌ BAD — Infrastructure type in Application
+public class Handler(ApplicationDbContext db) : IRequestHandler<...>
+
+// ✅ GOOD
+public class CreateCaseCommandHandler : IRequestHandler<CreateCaseCommand, Guid>
+{
+    public CreateCaseCommandHandler(IApplicationDbContext context, ICurrentUserService currentUser) { }
+}
+```
+
+New handlers/validators require unit tests and a feature or commit doc.

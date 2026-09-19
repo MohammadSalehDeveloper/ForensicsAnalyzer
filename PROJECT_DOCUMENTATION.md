@@ -1,6 +1,6 @@
 # ForensicsAnalyzer — Project Documentation
 
-> Last updated: August 12, 2026  
+> Last updated: September 20, 2026  
 > Status: Active development (Phases 1–4 complete; significant backend work beyond original roadmap)
 
 ---
@@ -336,8 +336,23 @@ Configured for Blazor dev URLs: `https://localhost:7123`, `http://localhost:5123
 
 ---
 
+## Agent protocols
+
+Coding agents must follow `AGENTS.md` (also `.cursor/rules/` and `docs/agent-protocols.md`):
+
+1. Propose commit messages only — do not run `git commit`.
+2. Do not change architecture, layers, infrastructure, domain, persistence, or packages without a question and explanation.
+3. Use Clean Architecture, Clean Code, design patterns, and ASP.NET technologies already in this solution.
+4. Explain every proposed commit in `docs/commits/`.
+5. Document new features, layers, models, infra, and technologies under `docs/features/` and this file when the system map changes.
+6. Add unit tests for new functionalities, features, stories, and infra (the first test project is still an architecture question — Phase 10).
+
 ## Related Files
 
+- `AGENTS.md` — Standing orders for coding agents
+- `docs/agent-protocols.md` — Human-readable agent protocol
+- `docs/commits/` — Per-commit explanations
+- `docs/features/` — Feature and story docs
 - `Roadmap.txt` — Original phase plan
 - `README.md` — Short project description
 - `.env.example` — Docker SQL Server environment template

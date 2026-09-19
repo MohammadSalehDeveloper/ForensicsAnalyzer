@@ -1,0 +1,25 @@
+---
+description: Thin ASP.NET Core controllers, JWT, permission policies
+globs: src/ForensicsAnalyzer.WebApi/**
+alwaysApply: false
+---
+
+# WebApi (`ForensicsAnalyzer.WebApi`)
+
+ASP.NET Core: `[ApiController]`, `[Route("api/[controller]")]`, `[Authorize]`, `[HasPermission(Permissions.X.Y)]`.
+
+- Controllers only send MediatR requests and return HTTP results. No DbContext, no domain construction beyond mapping IDs.
+- Auth, CORS, Swagger stay in `Program.cs` / existing middleware. New middleware or auth scheme = architecture-gate question.
+
+```csharp
+// ❌ BAD
+public async Task<IActionResult> Create([FromBody] Case entity) { _db.Add(entity); await _db.SaveChangesAsync(); }
+
+// ✅ GOOD
+[HttpPost]
+[HasPermission(Permissions.Artifacts.Create)]
+public async Task<ActionResult<Guid>> Create(CreateArtifactCommand command)
+    => Ok(await _mediator.Send(command));
+```
+
+Document new endpoints in `PROJECT_DOCUMENTATION.md` (API table) and `docs/features/`.

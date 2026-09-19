@@ -1,0 +1,35 @@
+---
+description: Unit tests are required for new functionality, features, stories, and infra
+alwaysApply: true
+---
+
+# Unit tests
+
+Create unit tests for new functionalities, features, stories, and infra. Load `.cursor/skills/add-unit-tests/SKILL.md` when adding tests.
+
+## When tests are mandatory
+
+- New/changed MediatR handler, validator, domain rule, permission policy
+- New repository/adapter, JWT/Identity behavior, mapping that encodes rules
+- New API story (test the application handler, not the MVC pipeline, unless asked)
+
+UI-only Blazor markup may skip unit tests; extractable client services must be tested.
+
+## No test project yet (Phase 10)
+
+Adding `tests/*.csproj` is an architecture/package change. **Ask once**, propose:
+
+- `tests/ForensicsAnalyzer.Application.Tests` (xUnit, FluentAssertions, NSubstitute, `net9.0`)
+- later: Domain, Infrastructure, WebApi as needed
+
+After the user approves, add the project and tests in the same task. After it exists, always add tests without asking.
+
+```csharp
+// ✅ GOOD — handler/validator in isolation
+[Fact]
+public async Task Handle_Should_Set_Owner_From_CurrentUser() { /* substitute ports, assert */ }
+
+// ❌ BAD — no test because “small”; or spinning SQL Server for a validator
+```
+
+Do not add test packages to production projects. Do not merge new behavior without tests or an explicit user skip.

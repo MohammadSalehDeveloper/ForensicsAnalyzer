@@ -1,0 +1,23 @@
+---
+description: Infrastructure — EF Core, Identity, JWT, repositories, mapping
+globs: src/ForensicsAnalyzer.Infrastructure/**
+alwaysApply: false
+---
+
+# Infrastructure (`ForensicsAnalyzer.Infrastructure`)
+
+Implements Application ports. Do not reverse the dependency (Application must not reference this project).
+
+- Persistence: `ApplicationDbContext`, fluent configurations, SQL Server, global filters for `ISoftDelete`.
+- Repositories + `UnitOfWork`; register in `DependencyInjection.cs`.
+- Identity, JWT, Google OAuth, AutoMapper profiles, development seeders.
+- New entity configuration, migration, or NuGet package = architecture-gate question + docs.
+
+```csharp
+// ❌ BAD — use-case / HTTP in a repository
+public async Task<IActionResult> CreateCaseFromHttp(HttpRequest req) { }
+
+// ✅ GOOD — persist only; mapping in profiles; DI in DependencyInjection.cs
+```
+
+Migrations and connection strings are persistence changes: explain and ask first. Cover new adapter logic with unit tests (not a live SQL Server unless the user asked for integration tests).

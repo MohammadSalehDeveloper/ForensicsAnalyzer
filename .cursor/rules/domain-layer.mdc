@@ -1,0 +1,20 @@
+---
+description: Domain layer constraints — entities, enums, no infrastructure
+globs: src/ForensicsAnalyzer.Domain/**
+alwaysApply: false
+---
+
+# Domain (`ForensicsAnalyzer.Domain`)
+
+- No project/package references. No EF, ASP.NET, MediatR, or AutoMapper.
+- Entities inherit `BaseEntity` (`Id`, `CreatedAt`, `UpdatedAt`, `MetadataJson`) unless there is an approved exception.
+- Soft-delete via `ISoftDelete`; keep domain rules in the entity, not in controllers.
+- New entity, enum, or base type = architecture-gate question + docs in `PROJECT_DOCUMENTATION.md` and `docs/features/` if it is a product concept.
+
+```csharp
+// ❌ BAD
+public class Case : BaseEntity { public SqlConnection Db { get; set; } }
+
+// ✅ GOOD
+public class Case : BaseEntity, ISoftDelete { public string Name { get; set; } = string.Empty; }
+```

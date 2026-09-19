@@ -1,0 +1,34 @@
+---
+description: Required docs for commits, features, layers, models, infra, and technologies
+alwaysApply: true
+---
+
+# Documentation
+
+A change is incomplete without docs. Load `.cursor/skills/document-change/SKILL.md` when writing them.
+
+## Where it goes
+
+| Change | Write |
+|--------|--------|
+| Any proposed commit | `docs/commits/YYYY-MM-DD-<slug>.md` |
+| New/changed feature or user story | `docs/features/<name>.md` |
+| Layer, entity, persistence, infra, or technology | update `PROJECT_DOCUMENTATION.md` + a focused `docs/` page if the topic is new |
+| Agent/process convention | `docs/agent-protocols.md` and `AGENTS.md` |
+
+Do not duplicate novels: commit docs explain **this delta**; feature docs explain **behavior**; `PROJECT_DOCUMENTATION.md` is the system map (keep the “Last updated” date current).
+
+## Commit doc (required)
+
+Use `docs/commits/YYYY-MM-DD-<slug>.md`:
+
+- Why the change exists
+- What changed (layers/projects, not a raw file dump)
+- Architecture impact (none, or link to the approved question)
+- Tests added
+- Proposed commit message (same text given to the user)
+
+```text
+❌ Chat-only recap, no file under docs/
+✅ Commit doc + feature/system doc when behavior or structure changed
+```

@@ -1,0 +1,19 @@
+---
+description: Shared DTOs between WebApi and Blazor client
+globs: src/ForensicsAnalyzer.Contracts/**
+alwaysApply: false
+---
+
+# Contracts (`ForensicsAnalyzer.Contracts`)
+
+- DTOs and request models only. No handlers, EF entities, or Blazor components.
+- Keep API and Blazor in sync: changing a DTO is a cross-layer contract change — mention it in docs and the proposed commit message.
+- Do not duplicate Domain entities here; map Entity → DTO in Infrastructure AutoMapper profiles.
+
+```csharp
+// ❌ BAD — entity leaked as API contract
+public class CaseDto : Case { }
+
+// ✅ GOOD — explicit DTO
+public sealed class CaseDto { public Guid Id { get; set; } public string Name { get; set; } = string.Empty; }
+```

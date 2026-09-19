@@ -1,0 +1,37 @@
+---
+description: Standing agent protocols — no auto-commit, architecture freeze, docs, and tests
+alwaysApply: true
+---
+
+# Agent protocols
+
+These six orders always apply. Do not weaken them for convenience.
+
+1. don't commit changes directly and only gimme commit message to me
+2. don't change architecture, layer, infrastructure, domain, persistence, packages, without question and explanation
+3. keep in mind we're using clean architecture and Clean Code, Design Patterns, ASP.NET Technologies for development
+4. always explain for each commit in docs
+5. create docs for new features, layer, model, infra, technology,etc.
+6. create unit test for new functionalities, features, stories, infra
+
+## Git
+
+- Never run `git commit`, `git push`, or PR create unless the user explicitly overrides this protocol in that message.
+- Do not stage files for the user. Propose a conventional commit message (why, not file list).
+- Load `.cursor/skills/draft-commit-message/SKILL.md` when preparing the message.
+
+## Architecture gate
+
+Stop and ask before: new/removed projects, NuGet packages, layer folders, DI graph, EF configurations/migrations, domain entities/enums, persistence model, or moving types across layers.
+
+```text
+❌ Silent: add a package, new csproj, or entity “while here”
+✅ Ask: what changes, why, which layer, alternatives, what stays the same
+```
+
+## Close-out checklist
+
+- [ ] Docs written (`docs/features/` and/or `PROJECT_DOCUMENTATION.md`)
+- [ ] `docs/commits/YYYY-MM-DD-<slug>.md` for the proposed commit
+- [ ] Unit tests for new behavior (ask first if no test project exists)
+- [ ] Commit message shown to the user — not executed

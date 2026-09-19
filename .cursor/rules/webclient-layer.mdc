@@ -1,0 +1,15 @@
+---
+description: Blazor WebAssembly client — UI, auth state, no Domain/Infrastructure
+globs: src/ForensicsAnalyzer.WebClient/**
+alwaysApply: false
+---
+
+# WebClient (`ForensicsAnalyzer.WebClient`)
+
+Blazor WASM talks to the API over HTTP + JWT. It must not reference Domain or Infrastructure.
+
+- Use `Contracts` DTOs. Auth via `AuthService` / `AuthenticationStateProvider` / local storage — register in `Program.cs` when touching auth.
+- Pages stay presentational; extract HTTP/auth logic into services (those services get unit tests).
+- New routes, auth handlers, or client packages = architecture-gate question + docs (`PROJECT_DOCUMENTATION.md` Blazor section, `docs/features/`).
+
+Verify UI changes in the browser when tools exist; otherwise say what could not be verified.
